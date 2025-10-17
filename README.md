@@ -23,6 +23,7 @@ The application follows these steps:
 4. Parses the CSV content
 5. Calculates the sum of the Sales column
 6. Displays the total in the #total-sales element
+7. Creates a Bootstrap table showing individual product sales
 
 ## License
 MIT
