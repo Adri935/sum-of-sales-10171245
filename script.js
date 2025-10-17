@@ -118,23 +118,38 @@ async function processSalesData() {
     
     // Find the sales column
     let salesColumnIndex = -1;
+    let productColumnIndex = -1;
     if (headers) {
       salesColumnIndex = headers.findIndex(header => 
         header.toLowerCase().includes('sales') || header.toLowerCase().includes('sale')
       );
+      productColumnIndex = headers.findIndex(header => 
+        header.toLowerCase().includes('product')
+      );
     }
     
-    // If we couldn't find by header name, assume second column
+    // If we couldn't find by header name, assume positions
     if (salesColumnIndex === -1) {
       salesColumnIndex = 1;
+    }
+    if (productColumnIndex === -1) {
+      productColumnIndex = 0;
     }
     
     // Calculate total sales
     let totalSales = 0;
+    const productSales = [];
+    
     for (const row of rows) {
       const salesValue = parseFloat(row[salesColumnIndex]);
+      const productName = row[productColumnIndex];
+      
       if (!isNaN(salesValue)) {
         totalSales += salesValue;
+        productSales.push({
+          product: productName,
+          sales: salesValue
+        });
       }
     }
     
@@ -142,6 +157,20 @@ async function processSalesData() {
     const totalSalesElement = document.getElementById('total-sales');
     if (totalSalesElement) {
       totalSalesElement.textContent = totalSales.toFixed(2);
+    }
+    
+    // Populate the product sales table
+    const tableBody = document.querySelector('#product-sales tbody');
+    if (tableBody) {
+      tableBody.innerHTML = '';
+      productSales.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.product}</td>
+          <td>$${item.sales.toFixed(2)}</td>
+        `;
+        tableBody.appendChild(row);
+      });
     }
   } catch (error) {
     console.error('Error processing sales data:', error);
